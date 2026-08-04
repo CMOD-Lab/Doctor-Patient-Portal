@@ -1,15 +1,11 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
 
-<web-app>
-  <display-name>Archetype Created Web Application</display-name>
-  <servlet>
-  	<servlet-name>myuserServlet</servlet-name>
-  	<display-name>myuserServlet</display-name>
-  	<description></description>
-  	<servlet-class>com.hms.user.servlet.myuserServlet</servlet-class>
-  </servlet>
+  <display-name>Doctor-Patient-Portal Web Application</display-name>
+
   <servlet>
   	<servlet-name>MyNewServlet</servlet-name>
   	<display-name>MyNewServlet</display-name>
@@ -17,11 +13,8 @@
   	<servlet-class>com.hms.user.servlet.MyNewServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-  	<servlet-name>myuserServlet</servlet-name>
-  	<url-pattern>/myuserServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
   	<servlet-name>MyNewServlet</servlet-name>
   	<url-pattern>/MyNewServletRegisterUser</url-pattern>
   </servlet-mapping>
+
 </web-app>
