@@ -8,6 +8,13 @@ import java.util.List;
 
 import com.hms.entity.Appointment;
 
+/**
+ * Data Access Object for Appointment entity.
+ * Updated for PostgreSQL 16 compatibility:
+ * - Replaced quoted camelCase column names with snake_case column names
+ * - PostgreSQL best practice: use snake_case identifiers (no quoting needed)
+ * - All JDBC operations use standard java.sql API
+ */
 public class AppointmentDAO {
 
 	private Connection conn;
@@ -17,14 +24,14 @@ public class AppointmentDAO {
 		this.conn = conn;
 	}
 
-	//for create appointment
+	// for create appointment
 	public boolean addAppointment(Appointment appointment) {
 
 		boolean f = false;
 
 		try {
 
-			String sql = "insert into appointment(userId, fullName, gender, age, appointmentDate, email, phone, diseases, doctorId, address, status) values(?,?,?,?,?,?,?,?,?,?,?)";
+			String sql = "insert into appointment(user_id, full_name, gender, age, appointment_date, email, phone, diseases, doctor_id, address, status) values(?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			pstmt.setInt(1, appointment.getUserId());
@@ -50,8 +57,8 @@ public class AppointmentDAO {
 		return f;
 	}
 
-	// get list of appointment for logged in specific user 
-	//show appointment list for specific user panel
+	// get list of appointment for logged in specific user
+	// show appointment list for specific user panel
 	public List<Appointment> getAllAppointmentByLoginUser(int userId) {
 		List<Appointment> appList = new ArrayList<Appointment>();
 
@@ -59,7 +66,7 @@ public class AppointmentDAO {
 
 		try {
 
-			String sql = "select * from appointment where userId=?";
+			String sql = "select * from appointment where user_id=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			pstmt.setInt(1, userId);
@@ -70,18 +77,18 @@ public class AppointmentDAO {
 
 				appointment = new Appointment();
 
-				appointment.setId(resultSet.getInt(1));// appoint id
-				appointment.setUserId(resultSet.getInt(2));// userId
-				appointment.setFullName(resultSet.getString(3));
-				appointment.setGender(resultSet.getString(4));
-				appointment.setAge(resultSet.getString(5));
-				appointment.setAppointmentDate(resultSet.getString(6));
-				appointment.setEmail(resultSet.getString(7));
-				appointment.setPhone(resultSet.getString(8));
-				appointment.setDiseases(resultSet.getString(9));
-				appointment.setDoctorId(resultSet.getInt(10));
-				appointment.setAddress(resultSet.getString(11));
-				appointment.setStatus(resultSet.getString(12));
+				appointment.setId(resultSet.getInt("id"));
+				appointment.setUserId(resultSet.getInt("user_id"));
+				appointment.setFullName(resultSet.getString("full_name"));
+				appointment.setGender(resultSet.getString("gender"));
+				appointment.setAge(resultSet.getString("age"));
+				appointment.setAppointmentDate(resultSet.getString("appointment_date"));
+				appointment.setEmail(resultSet.getString("email"));
+				appointment.setPhone(resultSet.getString("phone"));
+				appointment.setDiseases(resultSet.getString("diseases"));
+				appointment.setDoctorId(resultSet.getInt("doctor_id"));
+				appointment.setAddress(resultSet.getString("address"));
+				appointment.setStatus(resultSet.getString("status"));
 				appList.add(appointment);
 
 			}
@@ -95,7 +102,7 @@ public class AppointmentDAO {
 	}
 
 	// get appointment list of patient for specific doctor
-	//show list of appointment in specific doctor panel 
+	// show list of appointment in specific doctor panel
 	public List<Appointment> getAllAppointmentByLoginDoctor(int doctorId) {
 		List<Appointment> appList = new ArrayList<Appointment>();
 
@@ -103,7 +110,7 @@ public class AppointmentDAO {
 
 		try {
 
-			String sql = "select * from appointment where doctorId=?";
+			String sql = "select * from appointment where doctor_id=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			pstmt.setInt(1, doctorId);
@@ -114,18 +121,18 @@ public class AppointmentDAO {
 
 				appointment = new Appointment();
 
-				appointment.setId(resultSet.getInt(1));// appoint id
-				appointment.setUserId(resultSet.getInt(2));// userId
-				appointment.setFullName(resultSet.getString(3));
-				appointment.setGender(resultSet.getString(4));
-				appointment.setAge(resultSet.getString(5));
-				appointment.setAppointmentDate(resultSet.getString(6));
-				appointment.setEmail(resultSet.getString(7));
-				appointment.setPhone(resultSet.getString(8));
-				appointment.setDiseases(resultSet.getString(9));
-				appointment.setDoctorId(resultSet.getInt(10));
-				appointment.setAddress(resultSet.getString(11));
-				appointment.setStatus(resultSet.getString(12));
+				appointment.setId(resultSet.getInt("id"));
+				appointment.setUserId(resultSet.getInt("user_id"));
+				appointment.setFullName(resultSet.getString("full_name"));
+				appointment.setGender(resultSet.getString("gender"));
+				appointment.setAge(resultSet.getString("age"));
+				appointment.setAppointmentDate(resultSet.getString("appointment_date"));
+				appointment.setEmail(resultSet.getString("email"));
+				appointment.setPhone(resultSet.getString("phone"));
+				appointment.setDiseases(resultSet.getString("diseases"));
+				appointment.setDoctorId(resultSet.getInt("doctor_id"));
+				appointment.setAddress(resultSet.getString("address"));
+				appointment.setStatus(resultSet.getString("status"));
 				appList.add(appointment);
 
 			}
@@ -156,18 +163,18 @@ public class AppointmentDAO {
 
 				appointment = new Appointment();
 
-				appointment.setId(resultSet.getInt(1));// appoint id
-				appointment.setUserId(resultSet.getInt(2));// userId
-				appointment.setFullName(resultSet.getString(3));
-				appointment.setGender(resultSet.getString(4));
-				appointment.setAge(resultSet.getString(5));
-				appointment.setAppointmentDate(resultSet.getString(6));
-				appointment.setEmail(resultSet.getString(7));
-				appointment.setPhone(resultSet.getString(8));
-				appointment.setDiseases(resultSet.getString(9));
-				appointment.setDoctorId(resultSet.getInt(10));
-				appointment.setAddress(resultSet.getString(11));
-				appointment.setStatus(resultSet.getString(12));
+				appointment.setId(resultSet.getInt("id"));
+				appointment.setUserId(resultSet.getInt("user_id"));
+				appointment.setFullName(resultSet.getString("full_name"));
+				appointment.setGender(resultSet.getString("gender"));
+				appointment.setAge(resultSet.getString("age"));
+				appointment.setAppointmentDate(resultSet.getString("appointment_date"));
+				appointment.setEmail(resultSet.getString("email"));
+				appointment.setPhone(resultSet.getString("phone"));
+				appointment.setDiseases(resultSet.getString("diseases"));
+				appointment.setDoctorId(resultSet.getInt("doctor_id"));
+				appointment.setAddress(resultSet.getString("address"));
+				appointment.setStatus(resultSet.getString("status"));
 
 			}
 
@@ -186,7 +193,7 @@ public class AppointmentDAO {
 
 		try {
 
-			String sql = "update appointment set status=? where id=? and doctorId=?";
+			String sql = "update appointment set status=? where id=? and doctor_id=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setString(1, comment);
 			pstmt.setInt(2, apptId);
@@ -219,18 +226,18 @@ public class AppointmentDAO {
 
 				appointment = new Appointment();
 
-				appointment.setId(resultSet.getInt(1));// appoint id
-				appointment.setUserId(resultSet.getInt(2));// userId
-				appointment.setFullName(resultSet.getString(3));
-				appointment.setGender(resultSet.getString(4));
-				appointment.setAge(resultSet.getString(5));
-				appointment.setAppointmentDate(resultSet.getString(6));
-				appointment.setEmail(resultSet.getString(7));
-				appointment.setPhone(resultSet.getString(8));
-				appointment.setDiseases(resultSet.getString(9));
-				appointment.setDoctorId(resultSet.getInt(10));
-				appointment.setAddress(resultSet.getString(11));
-				appointment.setStatus(resultSet.getString(12));
+				appointment.setId(resultSet.getInt("id"));
+				appointment.setUserId(resultSet.getInt("user_id"));
+				appointment.setFullName(resultSet.getString("full_name"));
+				appointment.setGender(resultSet.getString("gender"));
+				appointment.setAge(resultSet.getString("age"));
+				appointment.setAppointmentDate(resultSet.getString("appointment_date"));
+				appointment.setEmail(resultSet.getString("email"));
+				appointment.setPhone(resultSet.getString("phone"));
+				appointment.setDiseases(resultSet.getString("diseases"));
+				appointment.setDoctorId(resultSet.getInt("doctor_id"));
+				appointment.setAddress(resultSet.getString("address"));
+				appointment.setStatus(resultSet.getString("status"));
 				appList.add(appointment);
 
 			}

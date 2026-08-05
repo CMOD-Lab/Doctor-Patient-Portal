@@ -10,9 +10,10 @@ import com.hms.entity.Doctor;
 
 /**
  * Data Access Object for Doctor entity.
- * Updated for Java 21 / Jakarta EE 10 compatibility:
- * - Removed unused javax.servlet.http.HttpSession import
- * - All JDBC operations use standard java.sql API (no javax/jakarta changes needed)
+ * Updated for PostgreSQL 16 compatibility:
+ * - Replaced quoted camelCase column names with snake_case column names
+ * - PostgreSQL best practice: use snake_case identifiers (no quoting needed)
+ * - All JDBC operations use standard java.sql API
  */
 public class DoctorDAO {
 
@@ -29,7 +30,7 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "insert into doctor(fullName,dateOfBirth,qualification,specialist,email,phone,password) values(?,?,?,?,?,?,?)";
+			String sql = "insert into doctor(full_name, date_of_birth, qualification, specialist, email, phone, password) values(?,?,?,?,?,?,?)";
 
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setString(1, doctor.getFullName());
@@ -67,8 +68,8 @@ public class DoctorDAO {
 				doctor = new Doctor();
 
 				doctor.setId(resultSet.getInt("id"));
-				doctor.setFullName(resultSet.getString("fullName"));
-				doctor.setDateOfBirth(resultSet.getString("dateOfBirth"));
+				doctor.setFullName(resultSet.getString("full_name"));
+				doctor.setDateOfBirth(resultSet.getString("date_of_birth"));
 				doctor.setQualification(resultSet.getString("qualification"));
 				doctor.setSpecialist(resultSet.getString("specialist"));
 				doctor.setEmail(resultSet.getString("email"));
@@ -101,8 +102,8 @@ public class DoctorDAO {
 				doctor = new Doctor();
 
 				doctor.setId(resultSet.getInt("id"));
-				doctor.setFullName(resultSet.getString("fullName"));
-				doctor.setDateOfBirth(resultSet.getString("dateOfBirth"));
+				doctor.setFullName(resultSet.getString("full_name"));
+				doctor.setDateOfBirth(resultSet.getString("date_of_birth"));
 				doctor.setQualification(resultSet.getString("qualification"));
 				doctor.setSpecialist(resultSet.getString("specialist"));
 				doctor.setEmail(resultSet.getString("email"));
@@ -124,7 +125,7 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "update doctor set fullName=?,dateOfBirth=?,qualification=?,specialist=?,email=?,phone=?,password=? where id=?";
+			String sql = "update doctor set full_name=?, date_of_birth=?, qualification=?, specialist=?, email=?, phone=?, password=? where id=?";
 
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setString(1, doctor.getFullName());
@@ -186,14 +187,14 @@ public class DoctorDAO {
 			while (resultSet.next()) {
 				doctor = new Doctor();
 
-				doctor.setId(resultSet.getInt(1));
-				doctor.setFullName(resultSet.getString(2));
-				doctor.setDateOfBirth(resultSet.getString(3));
-				doctor.setQualification(resultSet.getString(4));
-				doctor.setSpecialist(resultSet.getString(5));
-				doctor.setEmail(resultSet.getString(6));
-				doctor.setPhone(resultSet.getString(7));
-				doctor.setPassword(resultSet.getString(8));
+				doctor.setId(resultSet.getInt("id"));
+				doctor.setFullName(resultSet.getString("full_name"));
+				doctor.setDateOfBirth(resultSet.getString("date_of_birth"));
+				doctor.setQualification(resultSet.getString("qualification"));
+				doctor.setSpecialist(resultSet.getString("specialist"));
+				doctor.setEmail(resultSet.getString("email"));
+				doctor.setPhone(resultSet.getString("phone"));
+				doctor.setPassword(resultSet.getString("password"));
 			}
 
 		} catch (Exception e) {
@@ -210,12 +211,12 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "select * from doctor";
+			String sql = "select count(*) from doctor";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			ResultSet resultSet = pstmt.executeQuery();
-			while (resultSet.next()) {
-				i++;
+			if (resultSet.next()) {
+				i = resultSet.getInt(1);
 			}
 
 		} catch (Exception e) {
@@ -232,12 +233,12 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "select * from appointment";
+			String sql = "select count(*) from appointment";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			ResultSet resultSet = pstmt.executeQuery();
-			while (resultSet.next()) {
-				i++;
+			if (resultSet.next()) {
+				i = resultSet.getInt(1);
 			}
 
 		} catch (Exception e) {
@@ -254,13 +255,13 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "select * from appointment where doctorId=?";
+			String sql = "select count(*) from appointment where doctor_id=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setInt(1, doctorId);
 
 			ResultSet resultSet = pstmt.executeQuery();
-			while (resultSet.next()) {
-				i++;
+			if (resultSet.next()) {
+				i = resultSet.getInt(1);
 			}
 
 		} catch (Exception e) {
@@ -277,12 +278,12 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "select * from user_details";
+			String sql = "select count(*) from user_details";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			ResultSet resultSet = pstmt.executeQuery();
-			while (resultSet.next()) {
-				i++;
+			if (resultSet.next()) {
+				i = resultSet.getInt(1);
 			}
 
 		} catch (Exception e) {
@@ -299,12 +300,12 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "select * from specialist";
+			String sql = "select count(*) from specialist";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			ResultSet resultSet = pstmt.executeQuery();
-			while (resultSet.next()) {
-				i++;
+			if (resultSet.next()) {
+				i = resultSet.getInt(1);
 			}
 
 		} catch (Exception e) {
@@ -369,7 +370,7 @@ public class DoctorDAO {
 
 		try {
 
-			String sql = "update doctor set fullName=?,dateOfBirth=?,qualification=?,specialist=?,email=?,phone=? where id=?";
+			String sql = "update doctor set full_name=?, date_of_birth=?, qualification=?, specialist=?, email=?, phone=? where id=?";
 
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setString(1, doctor.getFullName());

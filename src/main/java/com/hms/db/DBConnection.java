@@ -6,16 +6,23 @@ import java.sql.SQLException;
 
 /**
  * Database connection utility class.
- * Updated for Java 21 / Jakarta EE 10 compatibility:
- * - Removed redundant Class.forName() call (JDBC 4.0+ auto-loads drivers via ServiceLoader)
- * - Replaced static shared Connection field with per-call connection to avoid thread-safety issues
- * - Added explicit SQLException handling for better diagnostics
+ * Updated for PostgreSQL 16 compatibility:
+ * - Uses PostgreSQL JDBC URL (jdbc:postgresql://)
+ * - Updated driver connection parameters for PostgreSQL
+ * - JDBC 4.0+ auto-loads the PostgreSQL driver via ServiceLoader; no Class.forName() needed
+ * - PostgreSQL default port: 5432
+ * - Note: In production, replace with a connection pool (e.g., HikariCP).
  */
 public class DBConnection {
 
+	// PostgreSQL connection parameters
+	private static final String DB_URL      = "jdbc:postgresql://localhost:5432/hospital";
+	private static final String DB_USER     = "postgres";
+	private static final String DB_PASSWORD = "wasim";
+
 	/**
 	 * Creates and returns a new database connection on each call.
-	 * Note: In production, replace with a connection pool (e.g., HikariCP).
+	 * Connects to PostgreSQL 16 database.
 	 *
 	 * @return a new {@link Connection} to the hospital database, or {@code null} on failure
 	 */
@@ -24,10 +31,9 @@ public class DBConnection {
 		Connection conn = null;
 
 		try {
-			// JDBC 4.0+ (Java 6+): Driver is auto-registered via ServiceLoader;
-			// Class.forName("com.mysql.cj.jdbc.Driver") is no longer required.
-			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/hospital", "root", "wasim");
+			// PostgreSQL JDBC URL format: jdbc:postgresql://<host>:<port>/<database>
+			// Default PostgreSQL port is 5432
+			conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
 		} catch (SQLException e) {
 			e.printStackTrace();

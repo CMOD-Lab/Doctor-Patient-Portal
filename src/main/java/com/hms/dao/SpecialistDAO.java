@@ -8,6 +8,13 @@ import java.util.List;
 
 import com.hms.entity.Specialist;
 
+/**
+ * Data Access Object for Specialist entity.
+ * Updated for PostgreSQL 16 compatibility:
+ * - Uses snake_case column names (specialist_name) for PostgreSQL best practice
+ * - PostgreSQL treats unquoted identifiers as lowercase; snake_case columns work without quoting
+ * - All JDBC operations use standard java.sql API
+ */
 public class SpecialistDAO {
 	
 	private Connection conn;
@@ -32,13 +39,9 @@ public class SpecialistDAO {
 			
 			f = true;
 			
-			
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
 		
 		return f;
 		
@@ -58,23 +61,18 @@ public class SpecialistDAO {
 			
 			while(resultSet.next()) {
 				
-				//create object
+				// create object
 				specialistObj = new Specialist();
-				//specialistObj.setId(resultSet.getInt("id"));
-				//specialistObj.setSpecialistName(resultSet.getString("specialist_name"));
-				//above two line same as below line
-				specialistObj.setId(resultSet.getInt(1));//column index number 1 -(id)
-				specialistObj.setSpecialistName(resultSet.getString(2));//column index number 2 -(specialist_name)
+				specialistObj.setId(resultSet.getInt("id"));
+				specialistObj.setSpecialistName(resultSet.getString("specialist_name"));
 				
-				//now add specialist object into List 
+				// now add specialist object into List 
 				spList.add(specialistObj);
 			}
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		
 		return spList;
 	}
