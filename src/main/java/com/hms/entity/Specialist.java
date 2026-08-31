@@ -1,6 +1,17 @@
 package com.hms.entity;
 
-public class Specialist {
+import java.io.Serializable;
+
+/**
+ * Specialist entity representing a medical specialist in the Hospital Management System.
+ * Implements Serializable to support Redis session storage for cloud-native distributed sessions.
+ */
+public class Specialist implements Serializable {
+	
+	/**
+	 * Serial version UID for Redis session serialization compatibility
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private int id;
 	private String specialistName;

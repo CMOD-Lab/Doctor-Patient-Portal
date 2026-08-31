@@ -5,6 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.hms.entity.User;
+import com.hms.util.PasswordEncryptionUtil;
+
+/**
+ * Data Access Object for User operations with AWS Secrets Manager-backed password encryption.
+ */
 
 public class UserDAO {
 
@@ -20,13 +25,17 @@ public class UserDAO {
 		boolean f = false;
 
 		try {
-			// insert user in db
+			// Encrypt password before storing in database
+			// Encryption key is securely managed in AWS Secrets Manager
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(user.getPassword());
+			
+			// Insert user in db with encrypted password
 			String sql = "insert into user_details(full_name, email, password) values(?,?,?)";
 
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, user.getFullName());
 			pstmt.setString(2, user.getEmail());
-			pstmt.setString(3, user.getPassword());
+			pstmt.setString(3, encryptedPassword);
 
 			pstmt.executeUpdate();
 
@@ -51,11 +60,14 @@ public class UserDAO {
 		User user = null;
 
 		try {
+			// Encrypt the provided password to compare with stored encrypted password
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(password);
+			
 			String sql = "select * from user_details where email=? and password=?";
 
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setString(1, email);
-			pstmt.setString(2, password);
+			pstmt.setString(2, encryptedPassword);
 
 			ResultSet resultSet = pstmt.executeQuery();
 			while (resultSet.next()) {
@@ -90,11 +102,13 @@ public class UserDAO {
 		boolean f = false;
 
 		try {
-
+			// Encrypt the provided password to compare with stored encrypted password
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(oldPassword);
+			
 			String sql = "select * from user_details where id=? and password=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setInt(1, userId);
-			pstmt.setString(2, oldPassword);
+			pstmt.setString(2, encryptedPassword);
 
 			ResultSet resultSet = pstmt.executeQuery();
 			//System.out.println(resultSet);
@@ -116,10 +130,12 @@ public class UserDAO {
 		boolean f = false;
 
 		try {
-
+			// Encrypt the new password before storing in database
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(newPassword);
+			
 			String sql = "update user_details set password=? where id=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
-			pstmt.setString(1, newPassword);
+			pstmt.setString(1, encryptedPassword);
 			pstmt.setInt(2, userId);
 
 			pstmt.executeUpdate();

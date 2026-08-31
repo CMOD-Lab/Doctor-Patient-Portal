@@ -7,9 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 //import javax.security.auth.message.callback.PrivateKeyCallback.Request;
-import javax.servlet.http.HttpSession;
 
 import com.hms.entity.Doctor;
+import com.hms.util.PasswordEncryptionUtil;
+
+/**
+ * Data Access Object for Doctor operations with AWS Secrets Manager-backed password encryption.
+ */
 
 public class DoctorDAO {
 
@@ -25,7 +29,10 @@ public class DoctorDAO {
 		boolean f = false;
 
 		try {
-
+			// Encrypt password before storing in database
+			// Encryption key is securely managed in AWS Secrets Manager
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(doctor.getPassword());
+			
 			String sql = "insert into doctor(fullName,dateOfBirth,qualification,specialist,email,phone,password) values(?,?,?,?,?,?,?)";
 
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
@@ -35,7 +42,7 @@ public class DoctorDAO {
 			pstmt.setString(4, doctor.getSpecialist());
 			pstmt.setString(5, doctor.getEmail());
 			pstmt.setString(6, doctor.getPhone());
-			pstmt.setString(7, doctor.getPassword());
+			pstmt.setString(7, encryptedPassword);
 
 			pstmt.executeUpdate();
 			// if query inserted or all ok than
@@ -122,7 +129,10 @@ public class DoctorDAO {
 		boolean f = false;
 
 		try {
-
+			// Encrypt password before storing in database
+			// Encryption key is securely managed in AWS Secrets Manager
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(doctor.getPassword());
+			
 			String sql = "update doctor set fullName=?,dateOfBirth=?,qualification=?,specialist=?,email=?,phone=?,password=? where id=?";
 
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
@@ -132,7 +142,7 @@ public class DoctorDAO {
 			pstmt.setString(4, doctor.getSpecialist());
 			pstmt.setString(5, doctor.getEmail());
 			pstmt.setString(6, doctor.getPhone());
-			pstmt.setString(7, doctor.getPassword());
+			pstmt.setString(7, encryptedPassword);
 			// need to set id also for update
 			pstmt.setInt(8, doctor.getId());
 
@@ -175,12 +185,14 @@ public class DoctorDAO {
 		Doctor doctor = null;
 
 		try {
-
+			// Encrypt the provided password to compare with stored encrypted password
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(password);
+			
 			String sql = "select * from doctor where email=? and password=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 
 			pstmt.setString(1, email);
-			pstmt.setString(2, password);
+			pstmt.setString(2, encryptedPassword);
 
 			ResultSet resultSet = pstmt.executeQuery();
 
@@ -346,11 +358,13 @@ public class DoctorDAO {
 		boolean f = false;
 
 		try {
-
+			// Encrypt the provided password to compare with stored encrypted password
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(oldPassword);
+			
 			String sql = "select * from doctor where id=? and password=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
 			pstmt.setInt(1, doctorId);
-			pstmt.setString(2, oldPassword);
+			pstmt.setString(2, encryptedPassword);
 
 			ResultSet resultSet = pstmt.executeQuery();
 
@@ -371,10 +385,12 @@ public class DoctorDAO {
 		boolean f = false;
 
 		try {
-
+			// Encrypt the new password before storing in database
+			String encryptedPassword = PasswordEncryptionUtil.encryptPassword(newPassword);
+			
 			String sql = "update doctor set password=? where id=?";
 			PreparedStatement pstmt = this.conn.prepareStatement(sql);
-			pstmt.setString(1, newPassword);
+			pstmt.setString(1, encryptedPassword);
 			pstmt.setInt(2, doctorId);
 
 			pstmt.executeUpdate();

@@ -1,6 +1,17 @@
 package com.hms.entity;
 
-public class Appointment {
+import java.io.Serializable;
+
+/**
+ * Appointment entity representing a medical appointment in the Hospital Management System.
+ * Implements Serializable to support Redis session storage for cloud-native distributed sessions.
+ */
+public class Appointment implements Serializable {
+
+	/**
+	 * Serial version UID for Redis session serialization compatibility
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private int id;
 	private int userId;

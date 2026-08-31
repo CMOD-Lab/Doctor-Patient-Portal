@@ -7,7 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.hms.util.SessionUtil;
 
 import com.hms.dao.DoctorDAO;
 import com.hms.db.DBConnection;
@@ -39,16 +39,19 @@ public class DoctorEditProfileServlet extends HttpServlet {
 
 			boolean f = docDAO.editDoctorProfile(doctor);
 
-			HttpSession session = req.getSession();
+			// Use SessionUtil for Redis-backed distributed session management
 
 			if (f == true) {
 				Doctor updateDoctorObj = docDAO.getDoctorById(id);
-				session.setAttribute("successMsgForD", "Doctor update Successfully");
-				session.setAttribute("doctorObj", updateDoctorObj); // over ride or update old session value to new updated doctor value.
+				// Success message stored in Redis, accessible from any instance
+				SessionUtil.setAttribute(req, "successMsgForD", "Doctor update Successfully");
+				// Updated doctor object stored in Redis, accessible from any instance
+				SessionUtil.setAttribute(req, "doctorObj", updateDoctorObj); // over ride or update old session value to new updated doctor value.
 				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			} else {
-				session.setAttribute("errorMsgForD", "Something went wrong on server!");
+				// Error message stored in Redis, accessible from any instance
+				SessionUtil.setAttribute(req, "errorMsgForD", "Something went wrong on server!");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 			}
 

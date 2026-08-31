@@ -3,7 +3,32 @@
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+  <display-name>Hospital Management System - Cloud Ready</display-name>
+  
+  <!-- Spring Context Configuration -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>com.hms.config.RedisSessionConfig</param-value>
+  </context-param>
+  
+  <!-- Spring Context Loader Listener -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <!-- Spring Session Filter - Must be first filter to intercept all requests -->
+  <filter>
+    <filter-name>springSessionRepositoryFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSessionRepositoryFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+  
+  <!-- Existing Servlet Configurations -->
   <servlet>
   	<servlet-name>myuserServlet</servlet-name>
   	<display-name>myuserServlet</display-name>

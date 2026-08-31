@@ -7,7 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.hms.util.SessionUtil;
 
 import com.hms.dao.DoctorDAO;
 import com.hms.db.DBConnection;
@@ -24,24 +24,23 @@ public class DoctorChangePassword extends HttpServlet {
 
 		DoctorDAO doctorDAO = new DoctorDAO(DBConnection.getConn());
 
-		HttpSession session = req.getSession();
 
 		if (doctorDAO.checkOldPassword(doctorId, oldPassword)) {
 
 			if (doctorDAO.changePassword(doctorId, newPassword)) {
 				
-				session.setAttribute("successMsg", "Password change successfully.");
+				SessionUtil.setAttribute(req, "successMsg", "Password change successfully.");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			} else {
 				
-				session.setAttribute("errorMsg", "Something went wrong on server!");
+				SessionUtil.setAttribute(req, "errorMsg", "Something went wrong on server!");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			}
 
 		} else {
-			session.setAttribute("errorMsg", "Old Password not match");
+			SessionUtil.setAttribute(req, "errorMsg", "Old Password not match");
 			resp.sendRedirect("doctor/edit_profile.jsp");
 
 		}

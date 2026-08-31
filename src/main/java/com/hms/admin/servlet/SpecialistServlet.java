@@ -7,7 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.hms.util.SessionUtil;
 
 import com.hms.dao.SpecialistDAO;
 import com.hms.db.DBConnection;
@@ -23,14 +23,16 @@ public class SpecialistServlet extends HttpServlet{
 		SpecialistDAO specialistDAO = new SpecialistDAO(DBConnection.getConn());
 		boolean f = specialistDAO.addSpecialist(specialistName);
 		
-		HttpSession session = req.getSession();
+		// Use SessionUtil for Redis-backed distributed session management
 		
 		if (f==true) {
-			session.setAttribute("successMsg", "Specialist added Successfully.");
+			// Success message stored in Redis, accessible from any instance
+			SessionUtil.setAttribute(req, "successMsg", "Specialist added Successfully.");
 			resp.sendRedirect("admin/index.jsp");
 			
 		} else {
-			session.setAttribute("errorMsg", "Something went wrong on server");
+			// Error message stored in Redis, accessible from any instance
+			SessionUtil.setAttribute(req, "errorMsg", "Something went wrong on server");
 			resp.sendRedirect("admin/index.jsp");
 		}
 	}

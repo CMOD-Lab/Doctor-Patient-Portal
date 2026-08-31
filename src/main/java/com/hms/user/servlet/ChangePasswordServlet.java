@@ -7,11 +7,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.hms.util.SessionUtil;
 
 import com.hms.dao.UserDAO;
 import com.hms.db.DBConnection;
 
+/**
+ * User change password servlet with distributed session management using Amazon ElastiCache for Redis.
+ * Session data is stored in Redis instead of local memory, enabling:
+ * - Stateless application instances
+ * - Horizontal scalability across multiple servers
+ * - Session persistence during instance restarts
+ * - Load balancing without sticky sessions
+ */
 @WebServlet("/userChangePassword")
 public class ChangePasswordServlet extends HttpServlet{
 
@@ -26,24 +34,23 @@ public class ChangePasswordServlet extends HttpServlet{
 		//boolean f = uDAO.checkOldPassword(userId, oldPassword);
 		
 		
-		HttpSession session = req.getSession();
-		
 		if(uDAO.checkOldPassword(userId, oldPassword)) {
 			
 			if(uDAO.changePassword(userId, newPassword)) {
-				
-				session.setAttribute("successMsg", "Password Change Successfully.");
+				// Success message stored in Redis-backed session
+				SessionUtil.setAttribute(req, "successMsg", "Password Change Successfully.");
 				resp.sendRedirect("change_password.jsp");
 				
 			}else {
-				
-				session.setAttribute("errorMsg", "Something wrong on server!");
+				// Error message stored in Redis-backed session
+				SessionUtil.setAttribute(req, "errorMsg", "Something wrong on server!");
 				resp.sendRedirect("change_password.jsp");
 				
 			}
 			
 		}else {
-			session.setAttribute("errorMsg", "Old password incorrect");
+			// Error message stored in Redis-backed session
+			SessionUtil.setAttribute(req, "errorMsg", "Old password incorrect");
 			resp.sendRedirect("change_password.jsp");
 		}
 		
