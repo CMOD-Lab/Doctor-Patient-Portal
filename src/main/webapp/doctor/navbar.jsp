@@ -30,6 +30,14 @@
 				<li class="nav-item"><a class="nav-link active"
 					aria-current="page" href="patient.jsp"><i
 						class="fa fa-wheelchair"></i> PATIENT</a></li>
+
+				<li class="nav-item"><a class="nav-link active"
+					aria-current="page" href="add_prescription.jsp"><i
+						class="fa fa-plus-circle"></i> ADD PRESCRIPTION</a></li>
+
+				<li class="nav-item"><a class="nav-link active"
+					aria-current="page" href="../viewDoctorPrescriptions"><i
+						class="fa fa-list"></i> VIEW PRESCRIPTIONS</a></li>
 			</ul>
 
 			<div class="dropdown">

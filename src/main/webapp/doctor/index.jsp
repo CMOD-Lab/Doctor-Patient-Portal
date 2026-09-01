@@ -89,6 +89,32 @@
 			</div>
 		</div>
 
+		<div class="row mt-3">
+			<div class="col-md-4 offset-md-2">
+				<div class="card my-card">
+					<div class="card-body text-center text-success">
+						<i class="fa fa-plus-circle fa-3x"></i><br>
+						<p class="fs-4 text-center">
+							<a href="add_prescription.jsp" class="text-decoration-none text-success">Add Prescription</a>
+						</p>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="col-md-4">
+				<div class="card my-card">
+					<div class="card-body text-center text-success">
+						<i class="fa fa-list fa-3x"></i><br>
+						<p class="fs-4 text-center">
+							<a href="../viewDoctorPrescriptions" class="text-decoration-none text-success">View Prescriptions</a>
+						</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
 
 	</div>
 
