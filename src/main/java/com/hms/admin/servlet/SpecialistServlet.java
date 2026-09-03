@@ -7,10 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.SpecialistDAO;
 import com.hms.db.DBConnection;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/addSpecialist")
 public class SpecialistServlet extends HttpServlet{
@@ -23,14 +23,13 @@ public class SpecialistServlet extends HttpServlet{
 		SpecialistDAO specialistDAO = new SpecialistDAO(DBConnection.getConn());
 		boolean f = specialistDAO.addSpecialist(specialistName);
 		
-		HttpSession session = req.getSession();
-		
+		// Use short-lived cookie for flash message instead of in-memory session attribute
 		if (f==true) {
-			session.setAttribute("successMsg", "Specialist added Successfully.");
+			JwtUtil.setMessageCookie(resp, "Specialist added Successfully.", "success");
 			resp.sendRedirect("admin/index.jsp");
 			
 		} else {
-			session.setAttribute("errorMsg", "Something went wrong on server");
+			JwtUtil.setMessageCookie(resp, "Something went wrong on server", "error");
 			resp.sendRedirect("admin/index.jsp");
 		}
 	}

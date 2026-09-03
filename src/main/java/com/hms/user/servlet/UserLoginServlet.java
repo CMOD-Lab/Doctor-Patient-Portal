@@ -7,11 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.UserDAO;
 import com.hms.db.DBConnection;
 import com.hms.entity.User;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/userLogin")
 public class UserLoginServlet extends HttpServlet {
@@ -22,17 +22,19 @@ public class UserLoginServlet extends HttpServlet {
 		String email = req.getParameter("email");
 		String password = req.getParameter("password");
 		
-		HttpSession session = req.getSession();
-		
 		UserDAO userDAO = new UserDAO(DBConnection.getConn());
 		User user = userDAO.loginUser(email, password);
 		
 		if (user!=null) {
-			session.setAttribute("userObj",user);
+			// Issue a JWT token for stateless authentication (replaces server-side session)
+			// Eliminates HttpSession.setAttribute("userObj") to enable EKS horizontal scaling
+			String token = JwtUtil.generateToken(email, "USER");
+			JwtUtil.setJwtCookie(resp, token);
 			resp.sendRedirect("index.jsp"); 
 		}
 		else {
-			session.setAttribute("errorMsg","Invalid email or password");
+			// Use short-lived cookie for flash message instead of in-memory session attribute
+			JwtUtil.setMessageCookie(resp, "Invalid email or password", "error");
 			resp.sendRedirect("user_login.jsp"); 
 		}
 	}

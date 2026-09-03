@@ -7,10 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.DoctorDAO;
 import com.hms.db.DBConnection;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/doctorChangePassword")
 public class DoctorChangePassword extends HttpServlet {
@@ -24,24 +24,23 @@ public class DoctorChangePassword extends HttpServlet {
 
 		DoctorDAO doctorDAO = new DoctorDAO(DBConnection.getConn());
 
-		HttpSession session = req.getSession();
-
+		// Use short-lived cookie for flash message instead of in-memory session attribute
 		if (doctorDAO.checkOldPassword(doctorId, oldPassword)) {
 
 			if (doctorDAO.changePassword(doctorId, newPassword)) {
 				
-				session.setAttribute("successMsg", "Password change successfully.");
+				JwtUtil.setMessageCookie(resp, "Password change successfully.", "success");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			} else {
 				
-				session.setAttribute("errorMsg", "Something went wrong on server!");
+				JwtUtil.setMessageCookie(resp, "Something went wrong on server!", "error");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			}
 
 		} else {
-			session.setAttribute("errorMsg", "Old Password not match");
+			JwtUtil.setMessageCookie(resp, "Old Password not match", "error");
 			resp.sendRedirect("doctor/edit_profile.jsp");
 
 		}

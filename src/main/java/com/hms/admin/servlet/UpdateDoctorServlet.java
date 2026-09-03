@@ -7,11 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.DoctorDAO;
 import com.hms.db.DBConnection;
 import com.hms.entity.Doctor;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/updateDoctor")
 public class UpdateDoctorServlet extends HttpServlet {
@@ -40,14 +40,13 @@ public class UpdateDoctorServlet extends HttpServlet {
 
 			boolean f = docDAO.updateDoctor(doctor);
 
-			HttpSession session = req.getSession();
-
+			// Use short-lived cookie for flash message instead of in-memory session attribute
 			if (f == true) {
-				session.setAttribute("successMsg", "Doctor update Successfully");
+				JwtUtil.setMessageCookie(resp, "Doctor update Successfully", "success");
 				resp.sendRedirect("admin/view_doctor.jsp");
 
 			} else {
-				session.setAttribute("errorMsg", "Something went wrong on server!");
+				JwtUtil.setMessageCookie(resp, "Something went wrong on server!", "error");
 				resp.sendRedirect("admin/view_doctor.jsp");
 			}
 

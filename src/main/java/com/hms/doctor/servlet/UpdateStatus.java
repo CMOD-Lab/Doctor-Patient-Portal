@@ -7,10 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.AppointmentDAO;
 import com.hms.db.DBConnection;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/updateStatus")
 public class UpdateStatus extends HttpServlet{
@@ -27,16 +27,14 @@ public class UpdateStatus extends HttpServlet{
 		 AppointmentDAO appDAO = new AppointmentDAO(DBConnection.getConn());
 		 boolean f = appDAO.updateDrAppointmentCommentStatus(id, doctorId, comment);
 		 
-		 HttpSession session = req.getSession();
-		 
-		 
+		 // Use short-lived cookie for flash message instead of in-memory session attribute
 		 if(f == true) {
-			 session.setAttribute("successMsg", "Comment updated");
+			 JwtUtil.setMessageCookie(resp, "Comment updated", "success");
 			 resp.sendRedirect("doctor/patient.jsp");
 			 
 		 }else {
 			 
-			 session.setAttribute("errorMsg", "Something went wrong on server!");
+			 JwtUtil.setMessageCookie(resp, "Something went wrong on server!", "error");
 			 resp.sendRedirect("doctor/patient.jsp");
 			 
 		 }

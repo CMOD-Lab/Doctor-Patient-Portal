@@ -7,10 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.UserDAO;
 import com.hms.db.DBConnection;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/userChangePassword")
 public class ChangePasswordServlet extends HttpServlet{
@@ -23,27 +23,24 @@ public class ChangePasswordServlet extends HttpServlet{
 		String newPassword = req.getParameter("newPassword");
 		
 		UserDAO uDAO = new UserDAO(DBConnection.getConn());
-		//boolean f = uDAO.checkOldPassword(userId, oldPassword);
 		
-		
-		HttpSession session = req.getSession();
-		
+		// Use short-lived cookie for flash message instead of in-memory session attribute
 		if(uDAO.checkOldPassword(userId, oldPassword)) {
 			
 			if(uDAO.changePassword(userId, newPassword)) {
 				
-				session.setAttribute("successMsg", "Password Change Successfully.");
+				JwtUtil.setMessageCookie(resp, "Password Change Successfully.", "success");
 				resp.sendRedirect("change_password.jsp");
 				
 			}else {
 				
-				session.setAttribute("errorMsg", "Something wrong on server!");
+				JwtUtil.setMessageCookie(resp, "Something wrong on server!", "error");
 				resp.sendRedirect("change_password.jsp");
 				
 			}
 			
 		}else {
-			session.setAttribute("errorMsg", "Old password incorrect");
+			JwtUtil.setMessageCookie(resp, "Old password incorrect", "error");
 			resp.sendRedirect("change_password.jsp");
 		}
 		

@@ -1,0 +1,57 @@
+# Java / Maven build artifacts
+target/
+*.war
+*.jar
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+README*
+
+# Maven wrapper (never used in Docker builds)
+mvnw
+mvnw.cmd
+.mvn/
+
+# Gradle wrapper (never used in Docker builds)
+gradlew
+gradlew.bat
+gradle/wrapper/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test reports
+surefire-reports/
+
+# Docker files (avoid recursive copy)
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Scripts
+scripts/
+
+# Kubernetes manifests
+kubernetes/
+
+# Docs
+docs/

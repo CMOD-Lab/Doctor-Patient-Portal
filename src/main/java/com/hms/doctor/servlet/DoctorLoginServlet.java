@@ -7,12 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.DoctorDAO;
-import com.hms.dao.UserDAO;
 import com.hms.db.DBConnection;
 import com.hms.entity.Doctor;
+import com.hms.util.JwtUtil;
 
 
 @WebServlet("/doctorLogin")
@@ -25,9 +24,6 @@ public class DoctorLoginServlet extends HttpServlet {
 		String email = req.getParameter("email");
 		String password = req.getParameter("password");
 
-		//create session
-		HttpSession session = req.getSession();
-
 		//create DB connection
 		DoctorDAO docDAO = new DoctorDAO(DBConnection.getConn());
 		
@@ -35,13 +31,15 @@ public class DoctorLoginServlet extends HttpServlet {
 		Doctor doctor = docDAO.loginDoctor(email, password);
 
 		if (doctor != null) {
-			//means doctor is valid or exist
-			//then store particular logged in doctor object in session
-			session.setAttribute("doctorObj", doctor);
+			// Issue a JWT token for stateless authentication (replaces server-side session)
+			// Eliminates HttpSession.setAttribute("doctorObj") to enable EKS horizontal scaling
+			String token = JwtUtil.generateToken(email, "DOCTOR");
+			JwtUtil.setJwtCookie(resp, token);
 			//and redirect the particular doctor index page which is reside doctor folder
 			resp.sendRedirect("doctor/index.jsp");//doctor index means dashboard of doctors
 		} else {
-			session.setAttribute("errorMsg", "Invalid email or password");
+			// Use short-lived cookie for flash message instead of in-memory session attribute
+			JwtUtil.setMessageCookie(resp, "Invalid email or password", "error");
 			resp.sendRedirect("doctor_login.jsp");
 		}
 

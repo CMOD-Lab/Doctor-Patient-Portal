@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: docportal
+  labels:
+    name: docportal
+    app: docportal

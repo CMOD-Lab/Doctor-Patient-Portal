@@ -7,11 +7,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.hms.dao.DoctorDAO;
 import com.hms.db.DBConnection;
 import com.hms.entity.Doctor;
+import com.hms.util.JwtUtil;
 
 @WebServlet("/doctorEditProfile")
 public class DoctorEditProfileServlet extends HttpServlet {
@@ -39,16 +39,16 @@ public class DoctorEditProfileServlet extends HttpServlet {
 
 			boolean f = docDAO.editDoctorProfile(doctor);
 
-			HttpSession session = req.getSession();
-
+			// Use short-lived cookie for flash message instead of in-memory session attribute
+			// Re-issue JWT token with updated doctor identity to keep stateless auth current
 			if (f == true) {
-				Doctor updateDoctorObj = docDAO.getDoctorById(id);
-				session.setAttribute("successMsgForD", "Doctor update Successfully");
-				session.setAttribute("doctorObj", updateDoctorObj); // over ride or update old session value to new updated doctor value.
+				String updatedToken = JwtUtil.generateToken(email, "DOCTOR");
+				JwtUtil.setJwtCookie(resp, updatedToken);
+				JwtUtil.setMessageCookie(resp, "Doctor update Successfully", "success");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 
 			} else {
-				session.setAttribute("errorMsgForD", "Something went wrong on server!");
+				JwtUtil.setMessageCookie(resp, "Something went wrong on server!", "error");
 				resp.sendRedirect("doctor/edit_profile.jsp");
 			}
 
