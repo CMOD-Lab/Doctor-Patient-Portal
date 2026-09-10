@@ -1,5 +1,15 @@
 package com.hms.entity;
 
+/**
+ * User entity class.
+ *
+ * Cloud Readiness Fix (cr-java-0113 - Lack of Externalized Secrets):
+ * - Removed the 'password' field from toString() to prevent credential leakage
+ *   in application logs, monitoring systems, and audit trails.
+ * - Passwords and sensitive credentials must be managed via AWS Secrets Manager
+ *   (see com.hms.config.AwsSecretsManagerUtil) rather than being embedded or
+ *   exposed in source code, log output, or serialized representations.
+ */
 public class User {
 	private int id;
 	private String fullName;
@@ -70,9 +80,18 @@ public class User {
 	}
 
 
+	/**
+	 * Returns a string representation of the User object.
+	 *
+	 * Cloud Readiness Fix (cr-java-0113):
+	 * The 'password' field has been intentionally excluded from this method
+	 * to prevent credential leakage into application logs, monitoring dashboards,
+	 * and audit trails. Secrets must be managed via AWS Secrets Manager and
+	 * must never appear in serialized or logged output.
+	 */
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", fullName=" + fullName + ", email=" + email + ", password=" + password + "]";
+		return "User [id=" + id + ", fullName=" + fullName + ", email=" + email + ", password=***REDACTED***]";
 	}
 	
 	

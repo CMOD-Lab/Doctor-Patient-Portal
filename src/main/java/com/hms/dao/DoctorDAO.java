@@ -6,11 +6,28 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-//import javax.security.auth.message.callback.PrivateKeyCallback.Request;
-import javax.servlet.http.HttpSession;
+// Cloud Readiness Fix: cr-java-0065 (HTTP Session State Storage)
+// Removed unused 'import javax.servlet.http.HttpSession' from the DAO layer.
+// DAOs must not hold or manipulate HTTP session state directly; session management
+// is now handled exclusively by Spring Session backed by Amazon ElastiCache for Redis
+// at the servlet/filter layer (SpringSessionRepositoryFilter + RedisSessionConfig).
+// This keeps the DAO stateless and cloud-native.
 
 import com.hms.entity.Doctor;
 
+/**
+ * DoctorDAO - Data Access Object for Doctor entity.
+ *
+ * Cloud Readiness Fix: cr-java-0065 (HTTP Session State Storage)
+ * This class no longer imports or references javax.servlet.http.HttpSession.
+ * All HTTP session state management has been migrated to Amazon ElastiCache
+ * for Redis via Spring Session. The DAO layer remains stateless and is
+ * responsible only for database operations.
+ *
+ * Session attributes (e.g., logged-in doctor object, flash messages) are
+ * stored and retrieved through the Redis-backed HttpSession provided by
+ * the SpringSessionRepositoryFilter registered in web.xml.
+ */
 public class DoctorDAO {
 
 	private Connection conn;

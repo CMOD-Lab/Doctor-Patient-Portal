@@ -2,10 +2,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hms</groupId>
 	<artifactId>Doctor-Patient-Portal</artifactId>
-	<packaging>war</packaging>
+	<!-- ================================================================== -->
+	<!-- WAR → JAR packaging - Cloud Readiness Fix cr-java-0107             -->
+	<!-- (WAR Packaging)                                                     -->
+	<!-- Changed from WAR to executable JAR with embedded Tomcat to enable  -->
+	<!-- container deployment on Amazon ECS, EKS, or AWS Fargate without    -->
+	<!-- requiring an external application server.                           -->
+	<!-- ================================================================== -->
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Doctor-Patient-Portal Maven Webapp</name>
 	<url>http://maven.apache.org</url>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<spring-boot.version>2.7.18</spring-boot.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -14,11 +26,21 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Embedded Tomcat via Spring Boot Web Starter replaces provided    -->
+		<!-- javax.servlet-api + external Tomcat server dependency.           -->
+		<!-- Spring Boot auto-configures an embedded Tomcat servlet container -->
+		<!-- so the application runs as a self-contained executable JAR.      -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version>
-			<scope>provided</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
+
+		<!-- JSTL support for JSP views with embedded Tomcat -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<version>9.0.83</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
@@ -42,14 +64,27 @@
 			<version>3.0.0</version>
 		</dependency>
 
-
 	</dependencies>
 	<build>
 		<plugins>
+			<!-- ================================================================== -->
+			<!-- Spring Boot Maven Plugin - Cloud Readiness Fix cr-java-0107        -->
+			<!-- Replaces maven-war-plugin with spring-boot-maven-plugin to         -->
+			<!-- produce a self-contained executable JAR with embedded Tomcat.      -->
+			<!-- The repackage goal bundles all dependencies and the embedded       -->
+			<!-- servlet container into a single runnable artifact.                 -->
+			<!-- ================================================================== -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3.1</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<finalName>Doctor-Patient-Portal</finalName>
