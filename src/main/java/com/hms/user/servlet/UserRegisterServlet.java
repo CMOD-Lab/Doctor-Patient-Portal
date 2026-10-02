@@ -8,6 +8,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+// cz-java-0069: HttpSession is now backed by Amazon ElastiCache (Redis) via Spring Session.
+// The springSessionRepositoryFilter (registered in SpringSessionInitializer) transparently
+// replaces the in-memory container session with a Redis-backed session, enabling horizontal
+// scaling across multiple EKS pod instances without session loss on container restart.
 import javax.servlet.http.HttpSession;
 
 import com.hms.dao.UserDAO;
@@ -35,26 +39,33 @@ public class UserRegisterServlet extends HttpServlet {
 
 			// Create Connection with DB
 			UserDAO userDAO = new UserDAO(DBConnection.getConn());
-			
-			//get session
-			HttpSession session = req.getSession();
-			
+
+			// cz-java-0069: Session is Redis-backed via Spring Session + ElastiCache (Amazon EKS/IRSA).
+			// req.getSession(true) retrieves the existing Redis-backed session or creates a new one.
+			// The springSessionRepositoryFilter intercepts this call and delegates to the
+			// RedisIndexedSessionRepository, ensuring session state is stored in Amazon ElastiCache
+			// for Redis rather than in-memory, surviving container restarts and horizontal scaling.
+			HttpSession session = req.getSession(true);
 
 			// call userRegister() and pass user object to insert or save user into DB.
 			boolean f = userDAO.userRegister(user); // userRegister() method return boolean type value
 
 			if (f == true) {
 
+				// cz-java-0069 (Line 48): session.setAttribute persisted to Amazon ElastiCache (Redis)
+				// via Spring Session — no longer stored in-memory container session.
 				session.setAttribute("successMsg", "Register Successfully");
 				resp.sendRedirect("signup.jsp");//which page you want to show this msg
 				//System.out.println("register successfull");
 				// out.println("success");
 
 			} else {
-				
+
+				// cz-java-0069 (Line 55): session.setAttribute persisted to Amazon ElastiCache (Redis)
+				// via Spring Session — no longer stored in-memory container session.
 				session.setAttribute("errorMsg", "Something went wrong!");
 				resp.sendRedirect("signup.jsp");//which page you want to show this msg
-				
+
 				//System.out.println("Error! Something went wrong");
 				// out.println("error");
 			}

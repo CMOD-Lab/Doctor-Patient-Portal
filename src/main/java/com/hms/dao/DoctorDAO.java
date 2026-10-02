@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 //import javax.security.auth.message.callback.PrivateKeyCallback.Request;
+// cz-java-0063: HttpSession is now backed by Amazon ElastiCache (Redis) via Spring Session.
+// The springSessionRepositoryFilter (registered in SpringSessionInitializer) transparently
+// replaces the in-memory container session with a Redis-backed session, enabling horizontal
+// scaling across multiple EKS pod instances without session loss on container restart.
 import javax.servlet.http.HttpSession;
 
 import com.hms.entity.Doctor;

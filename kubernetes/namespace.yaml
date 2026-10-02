@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: doctor-patient-portal
+  labels:
+    name: doctor-patient-portal
+    app: doctor-patient-portal

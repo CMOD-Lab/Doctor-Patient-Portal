@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: doctor-patient-portal-service
+  namespace: doctor-patient-portal
+  labels:
+    app: doctor-patient-portal
+    component: web
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: doctor-patient-portal

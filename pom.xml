@@ -46,6 +46,54 @@
 			<version>3.0.0</version>
 		</dependency>
 
+		<!-- Spring Session Core - cz-java-0063: Externalize server-side sessions -->
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-core</artifactId>
+			<version>2.7.4</version>
+		</dependency>
+
+		<!-- Spring Session Data Redis - backed by Amazon ElastiCache for Redis -->
+		<dependency>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
+			<version>2.7.4</version>
+		</dependency>
+
+		<!-- Spring Data Redis -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>2.7.14</version>
+		</dependency>
+
+		<!-- Lettuce Redis client (used by Spring Data Redis) -->
+		<dependency>
+			<groupId>io.lettuce</groupId>
+			<artifactId>lettuce-core</artifactId>
+			<version>6.2.7.RELEASE</version>
+		</dependency>
+
+		<!-- Spring Web (required for Spring Session filter integration) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.3.31</version>
+		</dependency>
+
+		<!-- Spring Context (required for Spring Session configuration) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.31</version>
+		</dependency>
+
+		<!-- Jackson for JSON serialization of session objects -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
+		</dependency>
 
 	</dependencies>
 	<build>
